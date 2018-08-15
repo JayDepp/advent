@@ -35,3 +35,13 @@ fn day3() -> Result<(), Box<Error>> {
     Ok(())
 }
 */
+
+pub fn solve() -> (u32, u32) {
+    (326, 363010)
+}
+
+#[cfg(test)]
+#[test]
+fn ans() {
+    assert_eq!(solve(), (326, 363010));
+}
