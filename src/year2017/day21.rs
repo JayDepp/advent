@@ -85,26 +85,20 @@ fn find(mut chunk: Grid, rules: &RuleBook) -> &Grid {
 
 fn rotate(chunk: &mut Grid) {
     let len = chunk.len();
-    let mut new = vec![vec![false; len]; len];
 
-    for i in 0..len {
-        for j in 0..len {
-            new[i][j] = chunk[len - j - 1][i];
-        }
-    }
+    let new = (0..len)
+        .map(|i| (0..len).map(|j| chunk[len - j - 1][i]).collect())
+        .collect();
 
     *chunk = new;
 }
 
 fn transpose(chunk: &mut Grid) {
     let len = chunk.len();
-    let mut new = vec![vec![false; len]; len];
 
-    for i in 0..len {
-        for j in 0..len {
-            new[i][j] = chunk[j][i];
-        }
-    }
+    let new = (0..len)
+        .map(|i| (0..len).map(|j| chunk[j][i]).collect())
+        .collect();
 
     *chunk = new;
 }
@@ -117,7 +111,8 @@ fn copy(dest: &mut Grid, source: &Grid, r: usize, c: usize) {
 }
 
 fn parse(text: &str) -> (Grid, Grid) {
-    let v: Vec<Grid> = text.split(" => ")
+    let v: Vec<Grid> = text
+        .split(" => ")
         .map(|side| {
             side.split('/')
                 .map(|line| line.bytes().map(|c| c == b'#').collect())
@@ -133,5 +128,5 @@ fn parse(text: &str) -> (Grid, Grid) {
 #[cfg(test)]
 #[test]
 fn ans() {
-    assert_eq!(solve().unwrap(), (176, 2368161));
+    assert_eq!(solve().unwrap(), (176, 2_368_161));
 }

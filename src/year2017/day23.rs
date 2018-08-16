@@ -59,7 +59,7 @@ fn part1(program: &[Ins]) -> usize {
 
 fn part2() -> usize {
     (0..=1000)
-        .map(|x| x * 17 + 106500)
+        .map(|x| x * 17 + 106_500)
         .filter(|&x| !is_prime(x))
         .count()
 }

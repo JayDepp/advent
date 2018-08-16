@@ -21,16 +21,15 @@ fn part1() -> u16 {
         206, 63, 255, 131, 65, 80, 238, 157, 254, 24, 133, 2, 16, 0, 1, 3,
     ];
     let mut rope = [0u8; 256];
-    for i in 1..256 {
-        rope[i] = i as u8;
-    }
+    rope.iter_mut().zip(0..=255).for_each(|(p, i)| *p = i);
+
     let mut i = 0;
     for (skip, &len) in lens.iter().enumerate() {
         twist(&mut rope, i, len);
         i = (i + len + skip) % 256;
     }
 
-    rope[0] as u16 * rope[1] as u16
+    u16::from(rope[0]) * u16::from(rope[1])
 }
 
 fn part2() -> String {
@@ -50,9 +49,7 @@ pub(crate) fn knot_hash(input: &str) -> Vec<u8> {
         .collect();
 
     let mut rope = [0u8; 256];
-    for i in 1..256 {
-        rope[i] = i as u8;
-    }
+    rope.iter_mut().zip(0..=255).for_each(|(p, i)| *p = i);
 
     let mut i = 0;
     let mut skip = 0;

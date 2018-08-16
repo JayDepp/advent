@@ -51,5 +51,5 @@ fn part2(list: &[i32]) -> u32 {
 #[cfg(test)]
 #[test]
 fn ans() {
-    assert_eq!(solve().unwrap(), (342669, 25136209));
+    assert_eq!(solve().unwrap(), (342_669, 25_136_209));
 }

@@ -37,11 +37,11 @@ fn day3() -> Result<(), Box<Error>> {
 */
 
 pub fn solve() -> (u32, u32) {
-    (326, 363010)
+    (326, 363_010)
 }
 
 #[cfg(test)]
 #[test]
 fn ans() {
-    assert_eq!(solve(), (326, 363010));
+    assert_eq!(solve(), (326, 363_010));
 }

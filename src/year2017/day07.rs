@@ -18,7 +18,7 @@ pub fn solve() -> Result<(String, u64), Box<Error>> {
         .map(|line| line.expect("Read error."))
         .collect();
 
-    let programs: HashMap<_, _> = lines.iter().map(parse_line).collect();
+    let programs: HashMap<_, _> = lines.iter().map(|line| parse_line(line)).collect();
 
     let mut stack: HashSet<_> = programs.keys().collect();
 
@@ -34,7 +34,7 @@ pub fn solve() -> Result<(String, u64), Box<Error>> {
     Ok((root.to_string(), find_imbalance(root, &programs)))
 }
 
-fn parse_line(text: &String) -> (&str, Program) {
+fn parse_line(text: &str) -> (&str, Program) {
     let_scan!(text; (
         let name: Word<&str>,
         "(",
@@ -66,7 +66,8 @@ fn find_imbalance(root: &str, programs: &HashMap<&str, Program>) -> u64 {
     // TODO: Remove recursion
     fn recur(name: &str, map: &HashMap<&str, Program>) -> Result<(u64, u64), u64> {
         let node = &map[name];
-        let weights = node.children
+        let weights = node
+            .children
             .iter()
             .map(|child| recur(child, map))
             .collect::<Result<Vec<_>, _>>()?;

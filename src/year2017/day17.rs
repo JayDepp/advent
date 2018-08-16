@@ -22,7 +22,7 @@ fn part2() -> u32 {
     let mut i = 0;
     let mut goal = 0;
 
-    for val in 1..50000000 {
+    for val in 1..50_000_000 {
         i = (i + STEP) % val + 1;
         if i == 1 {
             goal = val;
@@ -35,5 +35,5 @@ fn part2() -> u32 {
 #[cfg(test)]
 #[test]
 fn ans() {
-    assert_eq!(solve(), (725, 27361412));
+    assert_eq!(solve(), (725, 27_361_412));
 }

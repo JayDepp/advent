@@ -28,7 +28,7 @@ enum Ins {
 pub fn solve() -> Result<(i64, u64), Box<Error>> {
     let program = input()?;
 
-    Ok((part1(&program), part2(program)))
+    Ok((part1(&program), part2(&program)))
 }
 
 fn input() -> Result<Vec<Ins>, Box<Error>> {
@@ -69,7 +69,7 @@ fn part1(program: &[Ins]) -> i64 {
     }
 }
 
-fn part2(program: Vec<Ins>) -> u64 {
+fn part2(program: &[Ins]) -> u64 {
     let (tx1, rc1) = channel();
     let (tx2, rc2) = channel();
 
@@ -79,7 +79,7 @@ fn part2(program: Vec<Ins>) -> u64 {
         .into_iter()
         .enumerate()
         .map(|(id, (tx, rc))| {
-            let program = program.clone();
+            let program = program.to_vec();
             thread::spawn(move || {
                 let mut pos = 0;
                 let mut regs = HashMap::new();

@@ -11,7 +11,7 @@ impl Iterator for Gen {
     type Item = u64;
 
     fn next(&mut self) -> Option<Self::Item> {
-        self.prev = (self.prev * self.factor) % 2147483647;
+        self.prev = (self.prev * self.factor) % 2_147_483_647;
         Some(self.prev)
     }
 }
@@ -27,9 +27,8 @@ fn part1() -> usize {
     };
 
     gen_a
-        .into_iter()
-        .take(40000000)
-        .zip(gen_b.into_iter())
+        .take(40_000_000)
+        .zip(gen_b)
         .filter(|&(a, b)| a % 65536 == b % 65536)
         .count() as usize
 }
@@ -45,10 +44,9 @@ fn part2() -> usize {
     };
 
     gen_a
-        .into_iter()
         .filter(|&a| a % 4 == 0)
-        .take(5000000)
-        .zip(gen_b.into_iter().filter(|&b| b % 8 == 0))
+        .take(5_000_000)
+        .zip(gen_b.filter(|&b| b % 8 == 0))
         .filter(|&(a, b)| a % 65536 == b % 65536)
         .count() as usize
 }

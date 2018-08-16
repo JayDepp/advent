@@ -32,7 +32,7 @@ fn input() -> Vec<Vec<(Port, u8)>> {
 }
 
 fn part1() -> u32 {
-    fn recur(port: Port, sum: usize, used: HashMap<(Port, Port), u8>) -> usize {
+    fn recur(port: Port, sum: usize, used: &HashMap<(Port, Port), u8>) -> usize {
         COMPONENTS[port]
             .iter()
             .filter(|&&(next, count)| count > *used.get(&(port, next)).unwrap_or(&0))
@@ -40,18 +40,18 @@ fn part1() -> u32 {
                 let mut used = used.clone();
                 *used.entry((port, next)).or_insert(0) += 1;
                 *used.entry((next, port)).or_insert(0) += 1;
-                recur(next, sum + port + next, used)
+                recur(next, sum + port + next, &used)
             })
             .chain(once(sum))
             .max()
             .unwrap()
     }
 
-    recur(0, 0, HashMap::new()) as u32
+    recur(0, 0, &HashMap::new()) as u32
 }
 
 fn part2() -> u32 {
-    fn recur(port: Port, len: u32, sum: usize, used: HashMap<(Port, Port), u8>) -> (u32, usize) {
+    fn recur(port: Port, len: u32, sum: usize, used: &HashMap<(Port, Port), u8>) -> (u32, usize) {
         COMPONENTS[port]
             .iter()
             .filter(|&&(next, count)| count > *used.get(&(port, next)).unwrap_or(&0))
@@ -59,14 +59,14 @@ fn part2() -> u32 {
                 let mut used = used.clone();
                 *used.entry((port, next)).or_insert(0) += 1;
                 *used.entry((next, port)).or_insert(0) += 1;
-                recur(next, len + 1, sum + port + next, used)
+                recur(next, len + 1, sum + port + next, &used)
             })
             .chain(once((len, sum)))
             .max()
             .unwrap()
     }
 
-    recur(0, 0, 0, HashMap::new()).1 as u32
+    recur(0, 0, 0, &HashMap::new()).1 as u32
 }
 
 fn parse(text: &str) -> Component {

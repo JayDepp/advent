@@ -115,7 +115,7 @@ fn part2(mut grid: Grid2) -> usize {
     let mut p = Point { r: 0, c: 0 };
     let mut dir = North;
     let mut count = 0;
-    for _ in 0..10000000 {
+    for _ in 0..10_000_000 {
         let node = grid.entry(p).or_insert(Clean);
         match node {
             Clean => {
@@ -148,5 +148,5 @@ fn part2(mut grid: Grid2) -> usize {
 #[cfg(test)]
 #[test]
 fn ans() {
-    assert_eq!(solve().unwrap(), (5305, 2511424));
+    assert_eq!(solve().unwrap(), (5305, 2_511_424));
 }

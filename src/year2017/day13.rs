@@ -42,5 +42,5 @@ fn parse(text: &str) -> (u64, u64) {
 #[cfg(test)]
 #[test]
 fn ans() {
-    assert_eq!(solve().unwrap(), (1704, 3970918));
+    assert_eq!(solve().unwrap(), (1704, 3_970_918));
 }

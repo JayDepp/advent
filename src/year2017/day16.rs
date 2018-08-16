@@ -32,7 +32,7 @@ fn part1(steps: &[Step]) -> String {
 fn part2(steps: &[Step]) -> String {
     let mut stage = *b"abcdefghijklmnop";
 
-    let begin = stage.clone();
+    let begin = stage;
 
     let mut cycled = 1;
 
@@ -44,7 +44,7 @@ fn part2(steps: &[Step]) -> String {
         cycled += 1;
     }
 
-    for _ in 0..(1000000000 % cycled) {
+    for _ in 0..(1_000_000_000 % cycled) {
         dance(steps, &mut stage);
     }
 
