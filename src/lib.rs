@@ -6,4 +6,6 @@ extern crate scan_rules;
 #[macro_use]
 extern crate lazy_static;
 
+extern crate itertools;
+
 pub mod year2017;
