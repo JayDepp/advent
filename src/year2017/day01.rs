@@ -1,44 +1,33 @@
-use std::error::Error;
-use std::fs::File;
-use std::io::Read;
+use std::fs;
+use std::io;
 
-pub fn solve() -> Result<(u32, u32), Box<Error>> {
-    let mut file = File::open("input/2017/01.txt")?;
-    let mut contents = String::new();
-    file.read_to_string(&mut contents)?;
+pub fn solve() -> Result<(u32, u32), io::Error> {
+    let contents = fs::read_to_string("input/2017/01.txt")?;
     let bytes = contents.trim_right().as_bytes();
 
     Ok((part1(bytes), part2(bytes)))
 }
 
 fn part1(bytes: &[u8]) -> u32 {
-    let mut sum = bytes.iter().zip(&bytes[1..]).fold(0, |acc, (a, b)| {
-        if a == b {
-            acc + (*a as char).to_digit(10).unwrap()
-        } else {
-            acc
-        }
-    });
-
-    if bytes[0] == bytes[bytes.len() - 1] {
-        sum += (bytes[0] as char).to_digit(10).unwrap();
-    }
-
-    sum
+    matched_sum(bytes, 1)
 }
 
 fn part2(bytes: &[u8]) -> u32 {
-    let mut sum = 0;
-    let len = bytes.len();
-    let skip = len / 2;
+    matched_sum(bytes, bytes.len() / 2)
+}
 
-    for i in 0..len {
-        if bytes[i] == bytes[(i + skip) % len] {
-            sum += (bytes[i] as char).to_digit(10).unwrap();
-        }
-    }
+fn matched_sum(bytes: &[u8], offset: usize) -> u32 {
+    zip_offset(bytes, offset)
+        .filter(|&(a, b)| a == b)
+        .map(|(a, _)| (a as char).to_digit(10).unwrap())
+        .sum()
+}
 
-    sum
+fn zip_offset<'a>(bytes: &'a [u8], offset: usize) -> impl Iterator<Item = (u8, u8)> + 'a {
+    bytes
+        .iter()
+        .zip(bytes[offset..].iter().chain(&bytes[..offset]))
+        .map(|(&a, &b)| (a, b))
 }
 
 #[cfg(test)]
