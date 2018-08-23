@@ -1,6 +1,5 @@
 use std::error::Error;
-use std::fs::File;
-use std::io::Read;
+use std::fs;
 use std::str;
 
 enum Step {
@@ -16,9 +15,7 @@ pub fn solve() -> Result<(String, String), Box<Error>> {
 }
 
 fn input() -> Result<Vec<Step>, Box<Error>> {
-    let mut contents = String::new();
-    File::open("input/2017/16.txt")?.read_to_string(&mut contents)?;
-
+    let contents = fs::read_to_string("input/2017/16.txt")?;
     contents.trim_right().split(',').map(parse).collect()
 }
 

@@ -1,6 +1,5 @@
 use std::collections::HashMap;
-use std::fs::File;
-use std::io::Read;
+use std::fs;
 
 use scan_rules::scanner::Word;
 
@@ -25,11 +24,7 @@ pub fn solve() -> usize {
 }
 
 fn input() -> Input {
-    let mut contents = String::new();
-    File::open("input/2017/25.txt")
-        .expect("File not found.")
-        .read_to_string(&mut contents)
-        .expect("Failed to read");
+    let contents = fs::read_to_string("input/2017/25.txt").expect("Failed to read input");
 
     let mut iter = contents.split("\n\n");
 
@@ -38,8 +33,9 @@ fn input() -> Input {
         "Perform a diagnostic checksum after", let steps, "steps."
     ));
 
-    let blueprint = iter.map(|rule| {
-        let_scan!(rule; (
+    let blueprint = iter
+        .map(|rule| {
+            let_scan!(rule; (
             "In state", let state: char, ":",
             [ "If the current value is", let _: u32, ":",
                 "- Write the value", let write: u8, ".",
@@ -47,22 +43,22 @@ fn input() -> Input {
                 "- Continue with state", let next: char, "."
             ]+
         ));
-        (
-            state,
             (
-                Rule {
-                    write: write[0] == 1,
-                    offset: if dir[0] == "left" { -1 } else { 1 },
-                    next: next[0],
-                },
-                Rule {
-                    write: write[1] == 1,
-                    offset: if dir[1] == "left" { -1 } else { 1 },
-                    next: next[1],
-                },
-            ),
-        )
-    }).collect();
+                state,
+                (
+                    Rule {
+                        write: write[0] == 1,
+                        offset: if dir[0] == "left" { -1 } else { 1 },
+                        next: next[0],
+                    },
+                    Rule {
+                        write: write[1] == 1,
+                        offset: if dir[1] == "left" { -1 } else { 1 },
+                        next: next[1],
+                    },
+                ),
+            )
+        }).collect();
 
     Input {
         begin_state,

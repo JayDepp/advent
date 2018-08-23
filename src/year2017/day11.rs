@@ -1,11 +1,9 @@
 use std::cmp::max;
 use std::error::Error;
-use std::fs::File;
-use std::io::Read;
+use std::fs;
 
 pub fn solve() -> Result<(u64, u64), Box<Error>> {
-    let mut contents = String::new();
-    File::open("input/2017/11.txt")?.read_to_string(&mut contents)?;
+    let contents = fs::read_to_string("input/2017/11.txt")?;
     let mut x: i64 = 0;
     let mut y: i64 = 0;
     let mut max_dist: u64 = 0;
