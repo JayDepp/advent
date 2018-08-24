@@ -17,14 +17,16 @@ struct Instruction<'a> {
 pub fn solve() -> Result<(i64, i64), Box<Error>> {
     let file = File::open("input/2017/08.txt")?;
 
-    let lines = BufReader::new(file).lines().collect::<Result<Vec<_>, _>>()?;
+    let lines = BufReader::new(file)
+        .lines()
+        .collect::<Result<Vec<_>, _>>()?;
 
     let mut regs: HashMap<&str, i64> = HashMap::new();
     let mut max = 0;
 
     for line in &lines {
         let ins = parse_ins(line);
-        let &cond_val = regs.get(ins.cond_reg).unwrap_or(&0);
+        let cond_val = regs.get(ins.cond_reg).cloned().unwrap_or_default();
         let cond = match ins.cond_cmp {
             "<" => cond_val < ins.cond_amt,
             ">" => cond_val > ins.cond_amt,
@@ -35,8 +37,9 @@ pub fn solve() -> Result<(i64, i64), Box<Error>> {
             _ => panic!("Unrecognized comparator."),
         };
         if cond {
-            *regs.entry(ins.reg).or_insert(0) += ins.delta;
-            max = cmp::max(regs[ins.reg], max);
+            let reg = regs.entry(ins.reg).or_default();
+            *reg += ins.delta;
+            max = cmp::max(*reg, max);
         }
     }
 
