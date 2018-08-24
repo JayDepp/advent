@@ -1,35 +1,29 @@
+use std::fs;
+use std::io;
+
+use bitvec::BitVec;
+
 use super::day10::knot_hash;
 
-static KEY: &str = "xlqgujun";
-
-pub fn solve() -> (u32, u32) {
-    (part1(), part2())
+pub fn solve() -> Result<(u32, u32), io::Error> {
+    let contents = fs::read_to_string("input/2017/14.txt")?;
+    let key = contents.trim_right();
+    Ok((part1(key), part2(key)))
 }
 
-fn part1() -> u32 {
+fn part1(key: &str) -> u32 {
     (0..128)
         .map(|row| {
-            knot_hash(&format!("{}-{}", KEY, row))
+            knot_hash(&format!("{}-{}", key, row))
                 .iter()
                 .map(|x| x.count_ones())
                 .sum::<u32>()
-        })
-        .sum()
+        }).sum()
 }
 
-fn part2() -> u32 {
-    let mut grid: Vec<Vec<_>> = (0..128)
-        .map(|row| {
-            knot_hash(&format!("{}-{}", KEY, row))
-                .iter()
-                .flat_map(|x| {
-                    format!("{:08b}", x)
-                        .bytes()
-                        .map(|b| b == b'1')
-                        .collect::<Vec<_>>()
-                })
-                .collect()
-        })
+fn part2(key: &str) -> u32 {
+    let mut grid: Vec<BitVec> = (0..128)
+        .map(|row| knot_hash(&format!("{}-{}", key, row)).into())
         .collect();
 
     let mut regions = 0;
@@ -41,7 +35,7 @@ fn part2() -> u32 {
                 stack.extend(neighbors(i, j));
                 while let Some((r, c)) = stack.pop() {
                     if grid[r][c] {
-                        grid[r][c] = false;
+                        grid[r].set(c, false);
                         stack.extend(neighbors(r, c));
                     }
                 }
@@ -53,7 +47,7 @@ fn part2() -> u32 {
 }
 
 fn neighbors(r: usize, c: usize) -> Vec<(usize, usize)> {
-    let mut n = vec![];
+    let mut n = Vec::with_capacity(4);
     if r != 0 {
         n.push((r - 1, c));
     }
@@ -72,5 +66,5 @@ fn neighbors(r: usize, c: usize) -> Vec<(usize, usize)> {
 #[cfg(test)]
 #[test]
 fn ans() {
-    assert_eq!(solve(), (8204, 1089));
+    assert_eq!(solve().unwrap(), (8204, 1089));
 }
