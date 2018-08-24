@@ -1,39 +1,41 @@
-pub fn solve() -> (u16, String) {
-    (part1(), part2())
+use std::error::Error;
+use std::fs;
+
+pub fn solve() -> Result<(u16, String), Box<Error>> {
+    let contents = fs::read_to_string("input/2017/10.txt")?;
+    let bytes = scan!(&contents; ([let b: u8],*) => b)?;
+    Ok((part1(&bytes), part2(contents.trim_right())))
 }
 
-fn twist(rope: &mut [u8], pos: usize, len: usize) {
-    if pos + len > 256 {
-        let over = pos + len - 256;
+pub fn twist(rope: &mut [u8; 256], pos: u8, len: u8) {
+    if let (over, true) = pos.overflowing_add(len) {
+        let over = over as usize;
+        let pos = pos as usize;
         let mut buf = rope[pos..].to_vec();
         buf.extend_from_slice(&rope[..over]);
         buf.reverse();
-        let mid = 256 - pos;
-        rope[pos..].copy_from_slice(&buf[..mid]);
-        rope[..over].copy_from_slice(&buf[mid..])
+        let (left, right) = buf.split_at(256 - pos);
+        rope[pos..].copy_from_slice(left);
+        rope[..over].copy_from_slice(right)
     } else {
-        rope[pos..pos + len].reverse();
+        rope[pos as usize..(pos + len) as usize].reverse();
     }
 }
 
-fn part1() -> u16 {
-    let lens = [
-        206, 63, 255, 131, 65, 80, 238, 157, 254, 24, 133, 2, 16, 0, 1, 3,
-    ];
+fn part1(lengths: &[u8]) -> u16 {
     let mut rope = [0u8; 256];
-    rope.iter_mut().zip(0..=255).for_each(|(p, i)| *p = i);
+    rope.iter_mut().enumerate().for_each(|(i, p)| *p = i as u8);
 
     let mut i = 0;
-    for (skip, &len) in lens.iter().enumerate() {
+    for (skip, &len) in lengths.iter().enumerate() {
         twist(&mut rope, i, len);
-        i = (i + len + skip) % 256;
+        i = i.wrapping_add(len).wrapping_add(skip as u8);
     }
 
     u16::from(rope[0]) * u16::from(rope[1])
 }
 
-fn part2() -> String {
-    let input = "206,63,255,131,65,80,238,157,254,24,133,2,16,0,1,3";
+fn part2(input: &str) -> String {
     knot_hash(input)
         .iter()
         .map(|dense| format!("{:02x}", dense))
@@ -42,14 +44,12 @@ fn part2() -> String {
 
 pub(crate) fn knot_hash(input: &str) -> Vec<u8> {
     let lens: Vec<_> = input
-        .as_bytes()
-        .iter()
-        .chain(&[17, 31, 73, 47, 23])
-        .map(|&x| x as usize)
+        .bytes()
+        .chain([17, 31, 73, 47, 23].iter().cloned())
         .collect();
 
     let mut rope = [0u8; 256];
-    rope.iter_mut().zip(0..=255).for_each(|(p, i)| *p = i);
+    rope.iter_mut().enumerate().for_each(|(i, p)| *p = i as u8);
 
     let mut i = 0;
     let mut skip = 0;
@@ -57,8 +57,8 @@ pub(crate) fn knot_hash(input: &str) -> Vec<u8> {
     for _ in 0..64 {
         for &len in &lens {
             twist(&mut rope, i, len);
-            i = (i + len + skip) % 256;
-            skip += 1;
+            i = i.wrapping_add(len).wrapping_add(skip);
+            skip = skip.wrapping_add(1);
         }
     }
 
@@ -70,7 +70,7 @@ pub(crate) fn knot_hash(input: &str) -> Vec<u8> {
 #[cfg(test)]
 #[test]
 fn ans() {
-    let (part1, part2) = solve();
+    let (part1, part2) = solve().unwrap();
     assert_eq!(part1, 9656);
     assert_eq!(&part2, "20b7b54c92bf73cf3e5631458a715149");
 }
