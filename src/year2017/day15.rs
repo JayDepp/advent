@@ -1,7 +1,10 @@
-pub fn solve() -> (usize, usize) {
+use std::iter::FusedIterator;
+
+pub fn solve() -> (u32, u32) {
     (part1(), part2())
 }
 
+#[derive(Debug, Copy, Clone)]
 struct Gen {
     factor: u64,
     prev: u64,
@@ -16,7 +19,9 @@ impl Iterator for Gen {
     }
 }
 
-fn part1() -> usize {
+impl FusedIterator for Gen {}
+
+fn part1() -> u32 {
     let gen_a = Gen {
         factor: 16807,
         prev: 783,
@@ -30,10 +35,10 @@ fn part1() -> usize {
         .take(40_000_000)
         .zip(gen_b)
         .filter(|&(a, b)| a % 65536 == b % 65536)
-        .count() as usize
+        .count() as u32
 }
 
-fn part2() -> usize {
+fn part2() -> u32 {
     let gen_a = Gen {
         factor: 16807,
         prev: 783,
@@ -48,7 +53,7 @@ fn part2() -> usize {
         .take(5_000_000)
         .zip(gen_b.filter(|&b| b % 8 == 0))
         .filter(|&(a, b)| a % 65536 == b % 65536)
-        .count() as usize
+        .count() as u32
 }
 
 #[cfg(test)]
