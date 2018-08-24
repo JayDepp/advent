@@ -2,11 +2,13 @@ use std::cmp::max;
 use std::error::Error;
 use std::fs;
 
-pub fn solve() -> Result<(u64, u64), Box<Error>> {
+pub fn solve() -> Result<(u32, u32), Box<Error>> {
     let contents = fs::read_to_string("input/2017/11.txt")?;
-    let mut x: i64 = 0;
-    let mut y: i64 = 0;
-    let mut max_dist: u64 = 0;
+
+    let mut x: i32 = 0;
+    let mut y: i32 = 0;
+    let mut max_dist: u32 = 0;
+
     for dir in contents.trim_right().split(',') {
         match dir {
             "n" => {
@@ -39,15 +41,11 @@ pub fn solve() -> Result<(u64, u64), Box<Error>> {
     Ok((hex_dist(x, y), max_dist))
 }
 
-fn hex_dist(x: i64, y: i64) -> u64 {
-    let x = x.abs() as u64;
-    let y = y.abs() as u64;
+fn hex_dist(x: i32, y: i32) -> u32 {
+    let x = x.abs() as u32;
+    let y = y.abs() as u32;
 
-    if y > x {
-        x + (y - x) / 2
-    } else {
-        x
-    }
+    x + y.saturating_sub(x) / 2
 }
 
 #[cfg(test)]
