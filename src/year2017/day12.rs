@@ -48,14 +48,12 @@ fn part2(pipes: &[Vec<usize>]) -> u64 {
     groups
 }
 
-fn find(seen: &[bool], mut pos: usize) -> Option<usize> {
-    while pos < 2000 {
-        if !seen[pos] {
-            return Some(pos);
-        }
-        pos += 1;
-    }
-    None
+fn find(seen: &[bool], pos: usize) -> Option<usize> {
+    seen[pos..]
+        .iter()
+        .enumerate()
+        .find(|(_, &b)| !b)
+        .map(|(i, _)| i)
 }
 
 fn parse(text: &str) -> Vec<usize> {
