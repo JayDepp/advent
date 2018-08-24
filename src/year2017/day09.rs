@@ -1,10 +1,8 @@
 use std::error::Error;
-use std::fs::File;
-use std::io::Read;
+use std::fs;
 
 pub fn solve() -> Result<(u64, u64), Box<Error>> {
-    let mut contents = String::new();
-    File::open("input/2017/09.txt")?.read_to_string(&mut contents)?;
+    let contents = fs::read_to_string("input/2017/09.txt")?;
     let mut iter = contents.trim_right().bytes();
 
     let mut score = 0;
